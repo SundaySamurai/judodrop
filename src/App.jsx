@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { MapPin, Clock, Sunrise, Info, Users, Calendar, CalendarPlus, DollarSign, Copy, Check, Phone, Globe, Navigation, Trophy } from "lucide-react";
+import { MapPin, Clock, Sunrise, Info, Users, Calendar, CalendarPlus, CalendarClock, DollarSign, Copy, Check, Phone, Globe, Navigation, Trophy } from "lucide-react";
 
 // ---- DATA ----
 // This is the only part that changes week to week.
@@ -509,6 +509,12 @@ function formatDate(iso) {
   return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" });
 }
 
+// Compact "Sep 25" form — used for the biweekly "Next" badge, where a full
+// weekday+year date would be too long to stand out at a glance.
+function formatMonthDay(date) {
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
 function daysUntil(iso) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -863,49 +869,59 @@ function WeekAgenda({ clubs }) {
             <div className="space-y-2">
               {daySessions.map((s, i) => {
                 const isMorning = timeToMinutes(s.start) < MORNING_CUTOFF_MINUTES;
+                const nextOccurrence =
+                  s.recurrence === "biweekly" && s.startDate
+                    ? formatMonthDay(nextBiweeklyDate(s.startDate))
+                    : null;
                 return (
                   <div
                     key={i}
-                    className={`flex items-center gap-3 border-2 border-[#1B2A20] pl-3 pr-4 py-3 ${
-                      isMorning ? "bg-[#F7EAC3]" : "bg-[#F6F4EC]"
-                    }`}
+                    className={`border-2 border-[#1B2A20] ${isMorning ? "bg-[#F7EAC3]" : "bg-[#F6F4EC]"}`}
                     style={{ borderLeftColor: s.club.color, borderLeftWidth: 6 }}
                   >
-                    {isMorning ? (
-                      <Sunrise size={16} className="shrink-0" style={{ color: s.club.color }} />
-                    ) : (
-                      <Clock size={16} className="shrink-0" style={{ color: s.club.color }} />
-                    )}
-                    <div className="flex-1">
-                      <div className="font-semibold text-[#1B2A20]">
-                        {s.start} – {s.end}
+                    <div className="flex items-center gap-3 pl-3 pr-4 py-3">
+                      {isMorning ? (
+                        <Sunrise size={16} className="shrink-0" style={{ color: s.club.color }} />
+                      ) : (
+                        <Clock size={16} className="shrink-0" style={{ color: s.club.color }} />
+                      )}
+                      <div className="flex-1">
+                        <div className="font-semibold text-[#1B2A20]">
+                          {s.start} – {s.end}
+                        </div>
+                        <div className="text-sm text-[#5B6B5B]">
+                          {s.club.name}
+                          {s.instructor && ` · ${s.instructor}`}
+                          {(s.matFee ?? s.club.matFee) && ` · ${s.matFee ?? s.club.matFee}`}
+                        </div>
                       </div>
-                      <div className="text-sm text-[#5B6B5B]">
-                        {s.club.name}
-                        {s.instructor && ` · ${s.instructor}`}
-                        {(s.matFee ?? s.club.matFee) && ` · ${s.matFee ?? s.club.matFee}`}
+                      {s.label && (
+                        <span
+                          className="shrink-0 text-[10px] uppercase tracking-wide font-semibold px-1.5 py-0.5 border"
+                          style={{ borderColor: s.club.color, color: s.club.color }}
+                        >
+                          {s.label}
+                        </span>
+                      )}
+                      <div className="flex items-center gap-2 shrink-0">
+                        <CopyAddressButton address={s.club.address} color={s.club.color} />
+                        <a
+                          href={googleCalendarUrl(s, s.club)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Add ${s.club.name} ${s.day} class to Google Calendar`}
+                          style={{ color: s.club.color }}
+                        >
+                          <CalendarPlus size={18} />
+                        </a>
                       </div>
                     </div>
-                    {s.label && (
-                      <span
-                        className="shrink-0 text-[10px] uppercase tracking-wide font-semibold px-1.5 py-0.5 border"
-                        style={{ borderColor: s.club.color, color: s.club.color }}
-                      >
-                        {s.label}
-                      </span>
+                    {nextOccurrence && (
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#1B2A20] text-[#EFEDE2] text-xs font-bold uppercase tracking-wide border-t-2 border-[#1B2A20]">
+                        <CalendarClock size={14} className="shrink-0" />
+                        Not every week — next: {nextOccurrence}
+                      </div>
                     )}
-                    <div className="flex items-center gap-2 shrink-0">
-                      <CopyAddressButton address={s.club.address} color={s.club.color} />
-                      <a
-                        href={googleCalendarUrl(s, s.club)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`Add ${s.club.name} ${s.day} class to Google Calendar`}
-                        style={{ color: s.club.color }}
-                      >
-                        <CalendarPlus size={18} />
-                      </a>
-                    </div>
                   </div>
                 );
               })}
