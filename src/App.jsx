@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { MapPin, Clock, Sunrise, Info, Users, Calendar, CalendarPlus, DollarSign, Copy, Check, Phone, Globe, Navigation, Trophy } from "lucide-react";
 
 // ---- DATA ----
@@ -947,8 +947,23 @@ function TournamentsList() {
 }
 
 export default function App() {
-  const [city, setCity] = useState("San Antonio");
+  const [city, setCity] = useState(() => {
+    try {
+      const saved = localStorage.getItem("matTimeCity");
+      return CITIES.includes(saved) ? saved : "San Antonio";
+    } catch {
+      return "San Antonio";
+    }
+  });
   const [tab, setTab] = useState("open_mat");
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("matTimeCity", city);
+    } catch {
+      // localStorage unavailable (private browsing, blocked cookies/storage) — nothing to persist to, skip silently.
+    }
+  }, [city]);
 
   const cityClubs = useMemo(() => CLUBS.filter((c) => c.city === city), [city]);
   const openMatClubs = useMemo(
