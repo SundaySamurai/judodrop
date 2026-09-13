@@ -9,9 +9,9 @@ tournaments.
 
 Hours are manually verified against each club's own site/socials, not
 scraped — see the "Checked" date on each card. Each Class Schedule city
-also opens with a compact club directory (address with a copy button,
-phone, website) so you don't need the Open Mat tab just to get in touch
-with a club.
+also opens with a compact club directory (address with copy and
+get-directions buttons, phone, website) so you don't need the Open Mat
+tab just to get in touch with a club.
 
 ## Stack
 
@@ -72,6 +72,15 @@ by design — to update the site:
   listed on their site.
 - `club.phone` / `club.website` are only filled in for the clubs where a
   source screenshot happened to show one — most clubs don't have them yet.
+
+## Backlog
+
+- **Map view**: show all of a city's clubs as pins on one map instead of a
+  list, so it's easy to see which is closest to where you're staying.
+  Shelved for now — needs real lat/lng per club (only geocoded for 2 so
+  far, as a prototype) and a mapping library (Leaflet — no API key
+  needed, unlike Google Maps embeds). Nothing about it is blocked, it's
+  just more work than was worth doing right now.
 
 ## Maintenance
 

@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { MapPin, Clock, Sunrise, Info, Users, Calendar, CalendarPlus, DollarSign, Copy, Check, Phone, Globe, Trophy } from "lucide-react";
+import { MapPin, Clock, Sunrise, Info, Users, Calendar, CalendarPlus, DollarSign, Copy, Check, Phone, Globe, Navigation, Trophy } from "lucide-react";
 
 // ---- DATA ----
 // This is the only part that changes week to week.
@@ -623,6 +623,22 @@ function CopyAddressButton({ address, color }) {
   );
 }
 
+function GetDirectionsButton({ address, color }) {
+  const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`Get directions to ${address}`}
+      className="shrink-0"
+      style={{ color }}
+    >
+      <Navigation size={16} />
+    </a>
+  );
+}
+
 function ClubCard({ club }) {
   const openMatSessions = club.sessions.filter((s) => s.type === "open_mat");
 
@@ -647,7 +663,10 @@ function ClubCard({ club }) {
       <div className="mt-4 flex items-start gap-2 text-sm text-[#3D4A3D]">
         <MapPin size={16} className="mt-0.5 shrink-0" />
         <span className="flex-1">{club.address}</span>
-        <CopyAddressButton address={club.address} color={club.color} />
+        <div className="flex items-center gap-3 shrink-0">
+          <CopyAddressButton address={club.address} color={club.color} />
+          <GetDirectionsButton address={club.address} color={club.color} />
+        </div>
       </div>
 
       {club.phone && (
@@ -735,6 +754,7 @@ function ClubDirectory({ clubs }) {
           </div>
           <div className="flex items-center gap-3 shrink-0">
             <CopyAddressButton address={club.address} color={club.color} />
+            <GetDirectionsButton address={club.address} color={club.color} />
             {club.phone && (
               <a href={telHref(club.phone)} aria-label={`Call ${club.name}`} style={{ color: club.color }}>
                 <Phone size={16} />
