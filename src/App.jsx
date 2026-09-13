@@ -782,6 +782,12 @@ function WeekAgenda({ clubs }) {
   const classSessions = allSessionsByType(clubs, "class");
   const hasAny = classSessions.length > 0;
   const todayName = DAY_ORDER[new Date().getDay()];
+  const [labelFilter, setLabelFilter] = useState(null);
+
+  const labels = [...new Set(classSessions.map((s) => s.label).filter(Boolean))].sort();
+  const filteredSessions = labelFilter
+    ? classSessions.filter((s) => s.label === labelFilter)
+    : classSessions;
 
   return (
     <div className="space-y-5">
@@ -790,6 +796,36 @@ function WeekAgenda({ clubs }) {
       <h3 className="text-xs uppercase tracking-[0.2em] font-semibold text-[#5B6B5B] mt-2 pt-4 border-t border-[#1B2A20]/15">
         Weekly Schedule
       </h3>
+
+      {labels.length > 0 && (
+        <div className="-mx-4 px-4 overflow-x-auto">
+          <div className="flex gap-2 w-max">
+            <button
+              onClick={() => setLabelFilter(null)}
+              className={`shrink-0 px-3 py-1.5 text-xs uppercase tracking-wide font-semibold border-2 border-[#1B2A20] transition-colors ${
+                labelFilter === null
+                  ? "bg-[#1B2A20] text-[#EFEDE2]"
+                  : "bg-transparent text-[#1B2A20]"
+              }`}
+            >
+              All
+            </button>
+            {labels.map((label) => (
+              <button
+                key={label}
+                onClick={() => setLabelFilter(label)}
+                className={`shrink-0 px-3 py-1.5 text-xs uppercase tracking-wide font-semibold border-2 border-[#1B2A20] transition-colors ${
+                  labelFilter === label
+                    ? "bg-[#1B2A20] text-[#EFEDE2]"
+                    : "bg-transparent text-[#1B2A20]"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {!hasAny && (
         <div className="rounded-none border-2 border-[#1B2A20] bg-[#F6F4EC] p-6 flex items-start gap-2 text-sm italic text-[#8A6D3A]">
@@ -800,8 +836,15 @@ function WeekAgenda({ clubs }) {
         </div>
       )}
 
+      {hasAny && filteredSessions.length === 0 && (
+        <div className="rounded-none border-2 border-[#1B2A20] bg-[#F6F4EC] p-6 flex items-start gap-2 text-sm italic text-[#8A6D3A]">
+          <Info size={16} className="mt-0.5 shrink-0" />
+          <span>No "{labelFilter}" classes this week.</span>
+        </div>
+      )}
+
       {DAY_ORDER.slice(1).concat(DAY_ORDER[0]).map((day) => {
-        const daySessions = classSessions
+        const daySessions = filteredSessions
           .filter((s) => s.day === day)
           .sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
 
@@ -1063,7 +1106,7 @@ export default function App() {
             </div>
           )
         ) : (
-          <WeekAgenda clubs={cityClubs} />
+          <WeekAgenda clubs={cityClubs} key={city} />
         )}
 
         <footer className="mt-10 pt-6 border-t border-[#1B2A20]/15 text-xs text-[#5B6B5B] space-y-3">
