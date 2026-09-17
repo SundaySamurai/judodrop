@@ -1,4 +1,4 @@
-# Mat Time
+# Judodrop
 
 A no-account, no-sign-up schedule tracker for judo clubs and tournaments
 across Texas (San Antonio, Austin, Waco, Houston, Dallas), New York City,

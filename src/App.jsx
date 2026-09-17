@@ -586,7 +586,7 @@ function googleCalendarUrl(session, club) {
   const details = [
     session.instructor ? `Instructor: ${session.instructor}` : null,
     club.notes || null,
-    "Via Mat Time — hours change without notice, call ahead to confirm.",
+    "Via Judodrop — hours change without notice, call ahead to confirm.",
   ]
     .filter(Boolean)
     .join("\n");
@@ -1038,7 +1038,7 @@ export default function App() {
             TX · NJ · NY
           </p>
           <h1 className="font-serif text-4xl sm:text-5xl leading-none tracking-tight">
-            Mat Time
+            Judodrop
           </h1>
           <p className="mt-3 text-sm text-[#5B6B5B] max-w-sm">
             Manually verified, not scraped. No account, no sign-up.
