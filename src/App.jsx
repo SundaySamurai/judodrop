@@ -471,6 +471,13 @@ const TOURNAMENTS = [
     description: "Texas judo competition held during the Dallas tournament weekend.",
   },
   {
+    id: "northeastern-judo-champs-2026",
+    name: "Northeastern Judo Championships",
+    date: "2026-12-06",
+    location: "Paterson, NJ",
+    description: "USA Judo sanctioned point tournament (Junior Level 5, Senior Level E). Hosted by American Judo & Camal Judo Center.",
+  },
+  {
     id: "texas-winter-camp-2026",
     name: "Texas Winter Camp",
     date: "2026-12-19",
